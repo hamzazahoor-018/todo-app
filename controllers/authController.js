@@ -34,6 +34,14 @@ const signup = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
+    // Set access token cookie so server-side route protection can read it
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000 // 15 minutes
+    });
+
     return res.status(201).json({
       success: true,
       message: 'User registered successfully',
@@ -87,6 +95,14 @@ const login = async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    // Set access token cookie so protected routes work immediately after login
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000 // 15 minutes
     });
 
     return res.status(200).json({
@@ -151,6 +167,14 @@ const refreshAccessToken = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
+    // Keep the access token cookie in sync with the refreshed token pair
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000
+    });
+
     return res.status(200).json({
       success: true,
       message: 'Token refreshed successfully',
@@ -179,6 +203,7 @@ const logout = async (req, res) => {
 
     // Clear cookie
     res.clearCookie('refreshToken');
+    res.clearCookie('accessToken');
 
     return res.status(200).json({
       success: true,

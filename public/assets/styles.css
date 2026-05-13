@@ -15,6 +15,101 @@ body {
     padding: 32px 16px;
 }
 
+.auth-shell {
+    width: 100%;
+    display: grid;
+    place-items: center;
+}
+
+.auth-card {
+    width: min(460px, 100%);
+    padding: 32px;
+    border-radius: 24px;
+    background: rgba(15, 23, 42, 0.82);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    box-shadow: 0 30px 70px rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(18px);
+}
+
+.auth-eyebrow {
+    margin: 0 0 10px;
+    color: #38bdf8;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.auth-card h1 {
+    margin: 0 0 10px;
+    font-size: clamp(2rem, 4vw, 2.7rem);
+    line-height: 1;
+    color: #f8fafc;
+    letter-spacing: -0.04em;
+}
+
+.auth-subtitle {
+    margin: 0 0 24px;
+    color: #94a3b8;
+    font-size: 0.98rem;
+    line-height: 1.5;
+}
+
+.auth-form {
+    display: grid;
+    gap: 16px;
+}
+
+.auth-form label {
+    display: grid;
+    gap: 8px;
+}
+
+.auth-form span {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.auth-form input {
+    width: 100%;
+}
+
+.auth-message {
+    min-height: 24px;
+    margin: 16px 0 0;
+    font-size: 0.95rem;
+    color: #94a3b8;
+}
+
+.auth-message[data-state="success"] {
+    color: #4ade80;
+}
+
+.auth-message[data-state="error"] {
+    color: #f87171;
+}
+
+.auth-message[data-state="loading"] {
+    color: #fbbf24;
+}
+
+.auth-switch {
+    margin: 18px 0 0;
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+.auth-switch a {
+    color: #7dd3fc;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
 .todo-table {
     width: min(720px, 100%);
     padding: 28px;
@@ -101,7 +196,11 @@ ul {
     gap: 10px;
 }
 
-li {
+.todo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
     width: 100%;
     padding: 16px 18px;
     border-radius: 16px;
@@ -114,14 +213,81 @@ li {
     transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
-li:hover {
+.todo-item:hover {
     transform: translateY(-1px);
     background: rgba(30, 41, 59, 0.9);
     border-color: rgba(125, 211, 252, 0.35);
 }
 
-li:active {
+.todo-item:active {
     transform: translateY(0);
+}
+
+.todo-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.todo-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.todo-action-btn {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    box-shadow: none;
+}
+
+.todo-edit-btn {
+    background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+}
+
+.todo-delete-btn {
+    background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+}
+
+.todo-action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.todo-item.is-editing {
+    border-color: rgba(52, 211, 153, 0.9);
+    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.25);
+}
+
+.todo-cancel-btn {
+    background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+    box-shadow: none;
+}
+
+.todo-cancel-btn:hover {
+    box-shadow: none;
+}
+
+.todo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.todo-header h1 {
+    margin: 0;
+}
+
+.btn-logout {
+    padding: 10px 18px;
+    font-size: 14px;
+    background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.24);
+}
+
+.btn-logout:hover {
+    box-shadow: 0 12px 24px rgba(220, 38, 38, 0.32);
 }
 
 @media (max-width: 640px) {
@@ -135,6 +301,19 @@ li:active {
     }
 
     button {
+        width: 100%;
+    }
+
+    .todo-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .todo-actions {
+        width: 100%;
+    }
+
+    .todo-action-btn {
         width: 100%;
     }
 }

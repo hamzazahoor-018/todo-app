@@ -40,7 +40,15 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Public Routes
 app.get("/", (req, res) => {
-    res.send("Welcome to the Auth API with JWT");
+    res.redirect('/login');
+});
+
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+app.get('/signup', (req, res) => {
+    res.render('signup');
 });
 
 app.get('/hello', (req, res) => {
@@ -89,10 +97,8 @@ function listRoutes() {
     }
 }
 
-// Protected Routes (require JWT)
-app.use('/api', authMiddleware);
-
 // Protected Todo Routes
+app.use('/todo', authMiddleware);
 todoController(app, Todo);
 
 // Error handling middleware

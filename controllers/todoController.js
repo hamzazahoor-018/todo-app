@@ -1,50 +1,106 @@
 
-module.exports = function(app, Todo){
-
-    //now write all the routes here related to todo list
-    app.get('/todo', (req, res) => {
-        Todo.find({}).then(todos => {
-            res.render('todo', {todos});
-        });
-    });
-    
-    app.post('/todo', (req, res) => {
-        // logic to create a new todo
-        const item = typeof req.body.item === 'string' ? req.body.item.trim() : '';
-        if (!item) {
-            return res.status(400).send('Todo item is required');
+module.exports = function(app, Todo) {
+    app.get('/todo', async (req, res) => {
+        try {
+            const todos = await Todo.find({ userId: req.user.userId }).sort({ createdAt: -1 });
+            res.render('todo', { todos });
+        } catch (err) {
+            res.status(500).send(err.message);
         }
-
-        const newTodo = new Todo({ item });
-        newTodo.save()
-            .then(() => res.redirect('/todo'))
-            .catch(err => res.status(500).send(err.message));
     });
 
-    app.put('/todo/:id', (req, res) => {
-        res.send(`Update todo with id ${req.params.id}`);
-    });
-    
-    app.delete('/todo/:value', async (req, res) => {
-            const value = decodeURIComponent(req.params.value);
+    app.post('/todo', async (req, res) => {
+        try {
+            const item = typeof req.body.item === 'string' ? req.body.item.trim() : '';
 
-            try {
-                const deletedTodo = await Todo.findByIdAndDelete(value);
-
-                if (deletedTodo) {
-                    return res.sendStatus(200);
-                }
-
-                const deletedByItem = await Todo.findOneAndDelete({ item: value });
-
-                if (deletedByItem) {
-                    return res.sendStatus(200);
-                }
-
-                return res.sendStatus(404);
-            } catch (err) {
-                return res.status(500).send(err.message);
+            if (!item) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Todo item is required'
+                });
             }
+
+            const todo = await Todo.create({
+                item,
+                userId: req.user.userId
+            });
+
+            return res.status(201).json({
+                success: true,
+                message: 'Todo created successfully',
+                data: todo
+            });
+        } catch (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to create todo',
+                error: err.message
+            });
+        }
     });
 
-}
+    app.put('/todo/:id', async (req, res) => {
+        try {
+            const item = typeof req.body.item === 'string' ? req.body.item.trim() : '';
+
+            if (!item) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Todo item is required'
+                });
+            }
+
+            const updatedTodo = await Todo.findOneAndUpdate(
+                { _id: req.params.id, userId: req.user.userId },
+                { item },
+                { new: true }
+            );
+
+            if (!updatedTodo) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Todo not found'
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Todo updated successfully',
+                data: updatedTodo
+            });
+        } catch (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to update todo',
+                error: err.message
+            });
+        }
+    });
+
+    app.delete('/todo/:id', async (req, res) => {
+        try {
+            const deletedTodo = await Todo.findOneAndDelete({
+                _id: req.params.id,
+                userId: req.user.userId
+            });
+
+            if (!deletedTodo) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Todo not found'
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Todo deleted successfully'
+            });
+        } catch (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to delete todo',
+                error: err.message
+            });
+        }
+    });
+};
