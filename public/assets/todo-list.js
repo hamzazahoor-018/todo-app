@@ -19,11 +19,13 @@ $(document).ready(function(){
 
   });
 
-  $('li').on('click', function(){
-      var item = $(this).text().replace(/ /g, "-");
+  $(document).on('click', 'li', function(){
+      var itemId = $(this).data('id');
+      var itemText = $(this).data('item');
+      var deleteTarget = itemId || itemText;
       $.ajax({
         type: 'DELETE',
-        url: '/todo/' + item,
+        url: '/todo/' + encodeURIComponent(deleteTarget),
         success: function(data){
           //do something with the data via front-end framework
           location.reload();
