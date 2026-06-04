@@ -76,8 +76,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Print routes then start the server
-listRoutes();
+
 // start the server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
