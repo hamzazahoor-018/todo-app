@@ -1,106 +1,92 @@
+const todoService = require('../services/todoService');
 
-module.exports = function(app, Todo) {
-    app.get('/todo', async (req, res) => {
-        try {
-            const todos = await Todo.find({ userId: req.user.userId }).sort({ createdAt: -1 });
-            res.render('todo', { todos });
-        } catch (err) {
-            res.status(500).send(err.message);
-        }
-    });
+const getTodos = async (req, res) => {
+    try {
+        const todos = await todoService.getTodosByUser(req.user.userId);
 
-    app.post('/todo', async (req, res) => {
-        try {
-            const item = typeof req.body.item === 'string' ? req.body.item.trim() : '';
+        return res.status(200).json({
+            success: true,
+            data: todos
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to fetch todos',
+            error: err.message
+        });
+    }
+};
 
-            if (!item) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Todo item is required'
-                });
-            }
+const createTodo = async (req, res) => {
+    try {
+        const todo = await todoService.createTodo(req.user.userId, req.body.item);
 
-            const todo = await Todo.create({
-                item,
-                userId: req.user.userId
-            });
+        return res.status(201).json({
+            success: true,
+            message: 'Todo created successfully',
+            data: todo
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to create todo',
+            error: err.message
+        });
+    }
+};
 
-            return res.status(201).json({
-                success: true,
-                message: 'Todo created successfully',
-                data: todo
-            });
-        } catch (err) {
-            return res.status(500).json({
+const updateTodo = async (req, res) => {
+    try {
+        const updatedTodo = await todoService.updateTodo(req.user.userId, req.params.id, req.body.item);
+
+        if (!updatedTodo) {
+            return res.status(404).json({
                 success: false,
-                message: 'Failed to create todo',
-                error: err.message
+                message: 'Todo not found'
             });
         }
-    });
 
-    app.put('/todo/:id', async (req, res) => {
-        try {
-            const item = typeof req.body.item === 'string' ? req.body.item.trim() : '';
+        return res.status(200).json({
+            success: true,
+            message: 'Todo updated successfully',
+            data: updatedTodo
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to update todo',
+            error: err.message
+        });
+    }
+};
 
-            if (!item) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Todo item is required'
-                });
-            }
+const deleteTodo = async (req, res) => {
+    try {
+        const deletedTodo = await todoService.deleteTodo(req.user.userId, req.params.id);
 
-            const updatedTodo = await Todo.findOneAndUpdate(
-                { _id: req.params.id, userId: req.user.userId },
-                { item },
-                { new: true }
-            );
-
-            if (!updatedTodo) {
-                return res.status(404).json({
-                    success: false,
-                    message: 'Todo not found'
-                });
-            }
-
-            return res.status(200).json({
-                success: true,
-                message: 'Todo updated successfully',
-                data: updatedTodo
-            });
-        } catch (err) {
-            return res.status(500).json({
+        if (!deletedTodo) {
+            return res.status(404).json({
                 success: false,
-                message: 'Failed to update todo',
-                error: err.message
+                message: 'Todo not found'
             });
         }
-    });
 
-    app.delete('/todo/:id', async (req, res) => {
-        try {
-            const deletedTodo = await Todo.findOneAndDelete({
-                _id: req.params.id,
-                userId: req.user.userId
-            });
+        return res.status(200).json({
+            success: true,
+            message: 'Todo deleted successfully'
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to delete todo',
+            error: err.message
+        });
+    }
+};
 
-            if (!deletedTodo) {
-                return res.status(404).json({
-                    success: false,
-                    message: 'Todo not found'
-                });
-            }
-
-            return res.status(200).json({
-                success: true,
-                message: 'Todo deleted successfully'
-            });
-        } catch (err) {
-            return res.status(500).json({
-                success: false,
-                message: 'Failed to delete todo',
-                error: err.message
-            });
-        }
-    });
+module.exports = {
+    getTodos,
+    createTodo,
+    updateTodo,
+    deleteTodo
 };
