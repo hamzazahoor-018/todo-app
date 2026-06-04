@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/styles.css" type="text/css">
+    <title>Login</title>
+</head>
+<body>
+    <main class="auth-shell">
+        <section class="auth-card">
+            <p class="auth-eyebrow">Todo App</p>
+            <h1>Welcome back</h1>                                     
+            <p class="auth-subtitle">Sign in to continue to your dashboard and manage your tasks.</p>
+
+            <form class="auth-form" id="loginForm">
+                <label>
+                    <span>Email</span>
+                    <input type="email" style="padding: 5px;" name="email" autocomplete="email" placeholder="you@example.com" required>
+                </label>
+
+                <label>
+                    <span>Password</span>
+                    <input type="password" style="padding: 5px;" name="password" autocomplete="current-password" placeholder="Enter your password" required>
+                </label>
+
+                <button type="submit" id="loginBtn">Login</button>
+            </form>
+
+            <p class="auth-message" id="loginMessage"></p>
+            <p class="auth-switch">Don't have an account? <a href="/signup">Create one</a></p>
+        </section>
+    </main>
+    <script src="/assets/api.js"></script>
+    <script src="/assets/auth.js"></script>
+</body>
+</html>

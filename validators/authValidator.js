@@ -3,9 +3,7 @@ const { body } = require("express-validator");
 
 const signupValidation = [
   body("email")
-    .isEmail()
-    .withMessage("Invalid email format")
-    .normalizeEmail(),
+    .isEmail(),
 
   body("password")
     .isLength({ min: 6 })
@@ -17,8 +15,7 @@ const signupValidation = [
 const loginValidation = [
   body("email")
     .isEmail()
-    .withMessage("Invalid email format")
-    .normalizeEmail(),
+    .withMessage("Invalid email format"),
 
   body("password")
     .notEmpty()
