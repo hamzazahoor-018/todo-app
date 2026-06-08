@@ -13,11 +13,6 @@ router.post(
   authController.signup
 );
 
-// Quick health check for this router
-router.get('/ping', (req, res) => {
-  res.json({ success: true, message: 'auth router alive' });
-});
-
 router.post(
   '/login',
   ...authValidator.loginValidation,

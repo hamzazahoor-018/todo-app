@@ -3,24 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/assets/styles.css" type="text/css">
     <title>Todo</title>
 </head>
 <body>
     <div class="todo-table">
-        <h1>Todo List</h1>
+        <div class="todo-header">
+            <h1>Todo List</h1>
+            <button class="btn-logout" id="logoutBtn">Logout</button>
+        </div>
         <p class="todo-subtitle">Capture tasks, add them quickly, and remove them with a click.</p>
-        <form action="/todo" method="POST">
+        <form id="todoForm">
             <input type="text" name="item" id="todo-input" placeholder="Enter a todo item">
-            <button type="submit">Add</button>
+            <button type="submit" id="todoSubmitBtn">Add</button>
+            <button type="button" id="todoCancelBtn" class="todo-cancel-btn" hidden>Cancel</button>
         </form>
-        <ul>
+        <p class="auth-message" id="todoMessage"></p>
+        <ul id="todoList">
             <% for(let i = 0; i < todos.length; i++) { %>
-                <li data-id="<%= todos[i]._id %>" data-item="<%= todos[i].item %>"><%= todos[i].item %></li>
+                <li class="todo-item" data-id="<%= todos[i]._id %>" data-item="<%= todos[i].item %>">
+                    <span class="todo-text"><%= todos[i].item %></span>
+                    <div class="todo-actions">
+                        <button type="button" class="todo-action-btn todo-edit-btn">Edit</button>
+                        <button type="button" class="todo-action-btn todo-delete-btn">Delete</button>
+                    </div>
+                </li>
             <% } %>
         </ul>
     </div>
+    <script src="/assets/api.js"></script>
+    <script src="/assets/auth.js"></script>
     <script src="/assets/todo-list.js"></script>
 </body>
 </html>
