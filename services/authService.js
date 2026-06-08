@@ -7,16 +7,21 @@ const createAuthError = (statusCode, message) => {
   return error;
 };
 
-const signup = async (email, password) => {
+const signup = async (email, password, name, role) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw createAuthError(409, 'User already exists with this email');
   }
 
-  const user = new User({ email, password });
+  const user = new User({
+    email,
+    password,
+    name: name?.trim() || email.split('@')[0],
+    role: role || 'student'
+  });
   await user.save();
 
-  const tokens = generateTokens(user._id, user.email);
+  const tokens = generateTokens(user._id, user.email, user.role);
   user.refreshToken = tokens.refreshToken;
   await user.save();
 
@@ -34,7 +39,7 @@ const login = async (email, password) => {
     throw createAuthError(401, 'Invalid email or password');
   }
 
-  const tokens = generateTokens(user._id, user.email);
+  const tokens = generateTokens(user._id, user.email, user.role);
   user.refreshToken = tokens.refreshToken;
   await user.save();
 
@@ -56,7 +61,7 @@ const refreshAccessToken = async (refreshToken) => {
     throw createAuthError(401, 'Refresh token mismatch');
   }
 
-  const tokens = generateTokens(user._id, user.email);
+  const tokens = generateTokens(user._id, user.email, user.role);
   user.refreshToken = tokens.refreshToken;
   await user.save();
 

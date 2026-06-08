@@ -31,8 +31,8 @@ const sendAuthError = (res, error, fallbackMessage) => {
 // Signup Controller
 const signup = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const { user, tokens } = await authService.signup(email, password);
+    const { email, password, name, role } = req.body;
+    const { user, tokens } = await authService.signup(email, password, name, role);
 
     setAuthCookies(res, tokens);
 

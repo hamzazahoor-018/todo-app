@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 
 const authRoutes = require('./routes/auth');
 const todoRoutes = require('./routes/todo');
+const testRoutes = require('./routes/test');
+const submissionRoutes = require('./routes/submission');
 const authMiddleware = require('./middlewares/authMiddleware');
 
 const app = express();
@@ -65,6 +67,10 @@ app.use('/auth', authRoutes);
 
 // Protected Todo Routes
 app.use('/todo', authMiddleware, todoRoutes);
+
+// Protected Quiz Routes
+app.use('/tests', authMiddleware, testRoutes);
+app.use('/submissions', authMiddleware, submissionRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
