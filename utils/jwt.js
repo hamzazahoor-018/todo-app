@@ -6,9 +6,9 @@ const ACCESS_TOKEN_EXPIRY = '15m';
 const REFRESH_TOKEN_EXPIRY = '7d';
 
 // Generate Access Token (short-lived)
-const generateAccessToken = (userId, email) => {
+const generateAccessToken = (userId, email, role) => {
   return jwt.sign(
-    { userId, email },
+    { userId, email, role },
     ACCESS_TOKEN_SECRET,
     { expiresIn: ACCESS_TOKEN_EXPIRY }
   );
@@ -24,8 +24,8 @@ const generateRefreshToken = (userId) => {
 };
 
 // Generate both tokens at once
-const generateTokens = (userId, email) => {
-  const accessToken = generateAccessToken(userId, email);
+const generateTokens = (userId, email, role) => {
+  const accessToken = generateAccessToken(userId, email, role);
   const refreshToken = generateRefreshToken(userId);
   return { accessToken, refreshToken };
 };
