@@ -1,4 +1,5 @@
 const submissionService = require('../services/submissionService');
+const { emitNewSubmission } = require('../socket');
 
 const createSubmission = async (req, res) => {
   try {
@@ -17,6 +18,13 @@ const createSubmission = async (req, res) => {
     }
 
     const { submission, test, student } = result;
+    const studentName = student?.name || student?.email;
+
+    emitNewSubmission(test.createdBy.toString(), {
+      studentName,
+      testTitle: test.title,
+      score: submission.score
+    });
 
     return res.status(201).json({
       success: true,
@@ -25,7 +33,7 @@ const createSubmission = async (req, res) => {
         submission,
         score: submission.score,
         testTitle: test.title,
-        studentName: student?.name || student?.email
+        studentName
       }
     });
   } catch (err) {

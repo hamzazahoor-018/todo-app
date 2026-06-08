@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const http = require('http');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -10,6 +11,7 @@ const todoRoutes = require('./routes/todo');
 const testRoutes = require('./routes/test');
 const submissionRoutes = require('./routes/submission');
 const authMiddleware = require('./middlewares/authMiddleware');
+const { initSocket } = require('./socket');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -68,7 +70,7 @@ app.use('/auth', authRoutes);
 // Protected Todo Routes
 app.use('/todo', authMiddleware, todoRoutes);
 
-// Protected Quiz Routes
+// Protected Test Routes
 app.use('/tests', authMiddleware, testRoutes);
 app.use('/submissions', authMiddleware, submissionRoutes);
 
@@ -83,8 +85,10 @@ app.use((err, req, res, next) => {
 });
 
 
-// start the server
-app.listen(port, () => {
+const server = http.createServer(app);
+initSocket(server, frontendOrigin);
+
+server.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
 
