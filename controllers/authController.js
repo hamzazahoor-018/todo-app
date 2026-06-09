@@ -20,89 +20,61 @@ const clearAuthCookies = (res) => {
   res.clearCookie('accessToken');
 };
 
-const sendAuthError = (res, error, fallbackMessage) => {
-  return res.status(error.statusCode || 500).json({
-    success: false,
-    message: error.statusCode ? error.message : fallbackMessage,
-    error: error.statusCode ? undefined : error.message
+const signup = async (req, res) => {
+  const { email, password, name, role } = req.body;
+  const { user, tokens } = await authService.signup(email, password, name, role);
+
+  setAuthCookies(res, tokens);
+
+  res.status(201).json({
+    success: true,
+    message: 'User registered successfully',
+    data: {
+      user: user.toJSON(),
+      accessToken: tokens.accessToken
+    }
   });
 };
 
-// Signup Controller
-const signup = async (req, res) => {
-  try {
-    const { email, password, name, role } = req.body;
-    const { user, tokens } = await authService.signup(email, password, name, role);
-
-    setAuthCookies(res, tokens);
-
-    return res.status(201).json({
-      success: true,
-      message: 'User registered successfully',
-      data: {
-        user: user.toJSON(),
-        accessToken: tokens.accessToken
-      }
-    });
-  } catch (error) {
-    return sendAuthError(res, error, 'Signup failed');
-  }
-};
-
-// Login Controller
 const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const { user, tokens } = await authService.login(email, password);
+  const { email, password } = req.body;
+  const { user, tokens } = await authService.login(email, password);
 
-    setAuthCookies(res, tokens);
+  setAuthCookies(res, tokens);
 
-    return res.status(200).json({
-      success: true,
-      message: 'Login successful',
-      data: {
-        user: user.toJSON(),
-        accessToken: tokens.accessToken
-      }
-    });
-  } catch (error) {
-    return sendAuthError(res, error, 'Login failed');
-  }
+  res.status(200).json({
+    success: true,
+    message: 'Login successful',
+    data: {
+      user: user.toJSON(),
+      accessToken: tokens.accessToken
+    }
+  });
 };
 
-// Refresh Token Controller
 const refreshAccessToken = async (req, res) => {
-  try {
-    const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
-    const { tokens } = await authService.refreshAccessToken(refreshToken);
+  const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
+  const { tokens } = await authService.refreshAccessToken(refreshToken);
 
-    setAuthCookies(res, tokens);
+  setAuthCookies(res, tokens);
 
-    return res.status(200).json({
-      success: true,
-      message: 'Token refreshed successfully',
-      data: {
-        accessToken: tokens.accessToken
-      }
-    });
-  } catch (error) {
-    return sendAuthError(res, error, 'Token refresh failed');
-  }
+  res.status(200).json({
+    success: true,
+    message: 'Token refreshed successfully',
+    data: {
+      accessToken: tokens.accessToken
+    }
+  });
 };
 
-// Logout Controller
 const logout = async (req, res) => {
-  try {
-    await authService.logout(req.user?.userId);
-    clearAuthCookies(res);
+  await authService.logout(req.user?.userId);
+  clearAuthCookies(res);
 
-    return res.status(200).json({
-      success: true,
-      message: 'Logout successful'
-    });
-  } catch (error) {
-    return sendAuthError(res, error, 'Logout failed');
-  }
+  res.status(200).json({
+    success: true,
+    message: 'Logout successful'
+  });
 };
 
 module.exports = {
