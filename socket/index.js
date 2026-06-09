@@ -1,4 +1,5 @@
 const { Server } = require('socket.io');
+const { verifyAccessToken } = require('../utils/jwt');
 
 let io;
 
@@ -14,13 +15,17 @@ const initSocket = (server, frontendOrigin) => {
     console.log('Socket connected:', socket.id);
 
     socket.on('join_teacher_room', ({ teacherId }) => {
-      if (!teacherId) {
+      const token = socket.handshake.auth?.token;
+      const user = verifyAccessToken(token);
+
+      if (!user || user.role !== 'teacher' || user.userId !== String(teacherId)) {
+        socket.emit('socket_error', { message: 'Unauthorized to join this room' });
         return;
       }
 
       const room = String(teacherId);
       socket.join(room);
-      console.log(`Socket ${socket.id} joined teacher room: ${room}`);
+      console.log(`Teacher ${teacherId} joined room via socket ${socket.id}`);
     });
 
     socket.on('disconnect', () => {
@@ -31,7 +36,7 @@ const initSocket = (server, frontendOrigin) => {
   return io;
 };
 
-const getIO = () => io;
+// const getIO = () => io;
 
 const emitNewSubmission = (teacherId, payload) => {
   if (!io || !teacherId) {

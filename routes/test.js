@@ -14,9 +14,39 @@ router.post(
 );
 
 router.get(
+  '/mine',
+  requireRole('teacher'),
+  testController.getMyTests
+);
+
+router.get(
   '/',
   requireRole('student'),
   testController.getTests
+);
+
+router.get(
+  '/:id',
+  requireRole('student', 'teacher'),
+  ...testValidator.getTestByIdValidation,
+  validate,
+  testController.getTestById
+);
+
+router.put(
+  '/:id',
+  requireRole('teacher'),
+  ...testValidator.updateTestValidation,
+  validate,
+  testController.updateTest
+);
+
+router.delete(
+  '/:id',
+  requireRole('teacher'),
+  ...testValidator.deleteTestValidation,
+  validate,
+  testController.deleteTest
 );
 
 module.exports = router;

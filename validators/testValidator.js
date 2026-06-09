@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 
 const createTestValidation = [
   body('title')
@@ -40,6 +40,35 @@ const createTestValidation = [
     .withMessage('Question type must be mcq')
 ];
 
+const testIdValidation = [
+  param('id')
+    .isMongoId()
+    .withMessage('Invalid test id')
+];
+
+const testIdParamValidation = [
+  param('testId')
+    .isMongoId()
+    .withMessage('Invalid test id')
+];
+
+const updateTestValidation = [
+  ...testIdValidation,
+  ...createTestValidation
+];
+
+const deleteTestValidation = [
+  ...testIdValidation
+];
+
+const getTestByIdValidation = [
+  ...testIdValidation
+];
+
 module.exports = {
-  createTestValidation
+  createTestValidation,
+  updateTestValidation,
+  deleteTestValidation,
+  getTestByIdValidation,
+  testIdParamValidation
 };

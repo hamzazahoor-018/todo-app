@@ -1,37 +1,24 @@
 const { verifyAccessToken } = require('../utils/jwt');
+const AppError = require('../utils/AppError');
 
-// Middleware to verify JWT token
 const authMiddleware = (req, res, next) => {
   try {
-    // Get token from Authorization header or cookies
     const token = req.headers.authorization?.split(' ')[1] || req.cookies?.accessToken;
 
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'No token provided. Please login first.'
-      });
+      return next(new AppError(401, 'No token provided. Please login first.'));
     }
 
-    // Verify token
     const decoded = verifyAccessToken(token);
 
     if (!decoded) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid or expired token. Please login again.'
-      });
+      return next(new AppError(401, 'Invalid or expired token. Please login again.'));
     }
 
-    // Attach user info to request
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: 'Authentication failed',
-      error: error.message
-    });
+    next(new AppError(401, 'Authentication failed'));
   }
 };
 

@@ -11,6 +11,8 @@ const todoRoutes = require('./routes/todo');
 const testRoutes = require('./routes/test');
 const submissionRoutes = require('./routes/submission');
 const authMiddleware = require('./middlewares/authMiddleware');
+const notFoundHandler = require('./middlewares/notFoundHandler');
+const errorHandler = require('./middlewares/errorHandler');
 const { initSocket } = require('./socket');
 
 const app = express();
@@ -70,19 +72,13 @@ app.use('/auth', authRoutes);
 // Protected Todo Routes
 app.use('/todo', authMiddleware, todoRoutes);
 
-// Protected Test Routes
+// Protected Quiz Routes
 app.use('/tests', authMiddleware, testRoutes);
 app.use('/submissions', authMiddleware, submissionRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        message: 'Something went wrong!',
-        error: err.message
-    });
-});
+// 404 + global error handlers (must be after all routes)
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 
 const server = http.createServer(app);

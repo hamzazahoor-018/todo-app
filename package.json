@@ -4,20 +4,22 @@
   "description": "CSS and asset files for the Net Ninja YouTube nodejs playlist",
   "main": "index.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iamshaunjp/node-js-playlist.git"
+    "url": "git+https://github.com/hamzazahoor-018/todo-app"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/iamshaunjp/node-js-playlist/issues"
+    "url": "https://github.com/hamzazahoor-018/todo-appissues"
   },
-  "homepage": "https://github.com/iamshaunjp/node-js-playlist#readme",
+  "homepage": "https://github.com/hamzazahoor-018/todo-app#readme",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.2",
